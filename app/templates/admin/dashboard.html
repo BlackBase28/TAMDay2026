@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}管理後台總覽{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container"><div><span class="eyebrow">ADMIN CONSOLE</span><h1>管理後台</h1><p>登入者：{{ session.admin_username }}</p></div>{% include 'admin/_nav.html' %}</div></section>
+<section class="section container">
+  <div class="admin-stat-grid">
+    <div><span>CVE 筆數</span><strong>{{ stats.cves }}</strong></div>
+    <div><span>情境題目</span><strong>{{ stats.scenarios }}</strong></div>
+    <div><span>今日事件</span><strong>{{ stats.today_logs }}</strong></div>
+    <div><span>今日來源 IP</span><strong>{{ stats.today_ips }}</strong></div>
+    <div><span>挑戰正確率</span><strong>{{ ((stats.correct or 0) * 100 / stats.attempts)|round|int if stats.attempts else 0 }}%</strong></div>
+  </div>
+  <div class="panel">
+    <div class="panel-heading"><h2>最近操作紀錄</h2><a href="{{ url_for('admin.logs') }}">查看全部 →</a></div>
+    <div class="table-wrap"><table><thead><tr><th>時間</th><th>IP</th><th>事件</th><th>結果</th></tr></thead><tbody>{% for log in recent %}<tr><td>{{ log.created_at }}</td><td><code>{{ log.ip_address }}</code></td><td>{{ log.action }}</td><td>{{ log.result or '-' }}</td></tr>{% else %}<tr><td colspan="4">尚無紀錄</td></tr>{% endfor %}</tbody></table></div>
+  </div>
+</section>
+{% endblock %}

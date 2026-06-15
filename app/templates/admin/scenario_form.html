@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ '編輯題目' if scenario.id else '新增題目' }}{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container"><div><span class="eyebrow">ADMIN CONSOLE</span><h1>{{ '編輯題目' if scenario.id else '新增題目' }}</h1><p>至少設定兩個選項，並指定一個正確答案。</p></div>{% include 'admin/_nav.html' %}</div></section>
+<section class="section container narrow-wide"><form method="post" class="panel form-panel"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>題目標題<input name="title" value="{{ scenario.title or '' }}" required></label><label>情境說明<textarea name="description" rows="5" required>{{ scenario.description or '' }}</textarea></label><label>解答說明<textarea name="explanation" rows="5" required>{{ scenario.explanation or '' }}</textarea></label><h2>答案選項</h2><p class="form-help">每個選項需對應一個 CVE；顯示文字可改成處置方式或情境答案。</p>
+<div class="option-editor">
+{% set count = options|length if options|length >= 4 else 4 %}
+{% for i in range(count) %}{% set opt = options[i] if i < options|length else {} %}<div class="option-edit-row"><input type="radio" name="correct_index" value="{{ i }}" aria-label="正確答案" {% if opt.is_correct %}checked{% endif %} required><select name="option_cve_id" required><option value="">選擇 CVE</option>{% for cve in cves %}<option value="{{ cve.id }}" {% if opt.cve_id == cve.id %}selected{% endif %}>{{ cve.cve_id }} — {{ cve.name }}</option>{% endfor %}</select><input name="option_label" value="{{ opt.label or '' }}" placeholder="前台顯示文字" required></div>{% endfor %}
+</div><div class="check-row"><label><input type="checkbox" name="enabled" {% if scenario.enabled %}checked{% endif %}> 啟用此題</label></div><div class="form-actions"><a class="btn btn-ghost" href="{{ url_for('admin.scenarios') }}">取消</a><button class="btn btn-primary" type="submit">儲存題目</button></div></form></section>
+{% endblock %}

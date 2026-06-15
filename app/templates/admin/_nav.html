@@ -1,0 +1,8 @@
+<nav class="admin-tabs" aria-label="管理後台">
+  <a class="{{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">總覽</a>
+  <a class="{{ 'active' if request.endpoint in ['admin.cves','admin.cve_new','admin.cve_edit'] }}" href="{{ url_for('admin.cves') }}">CVE 管理</a>
+  <a class="{{ 'active' if request.endpoint in ['admin.scenarios','admin.scenario_new','admin.scenario_edit'] }}" href="{{ url_for('admin.scenarios') }}">題目管理</a>
+  <a class="{{ 'active' if request.endpoint == 'admin.logs' }}" href="{{ url_for('admin.logs') }}">操作紀錄</a>
+  <a class="{{ 'active' if request.endpoint == 'admin.password' }}" href="{{ url_for('admin.password') }}">變更密碼</a>
+  <form method="post" action="{{ url_for('admin.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">登出</button></form>
+</nav>

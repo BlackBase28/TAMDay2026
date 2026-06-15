@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container"><div><span class="eyebrow">ADMIN CONSOLE</span><h1>{{ title }}</h1><p>請避免輸入未經確認的修補版本資訊。</p></div>{% include 'admin/_nav.html' %}</div></section>
+<section class="section container narrow-wide">
+<form method="post" class="panel form-panel">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="form-grid two"><label>CVE ID<input name="cve_id" value="{{ cve.cve_id or '' }}" placeholder="CVE-2026-12345" required></label><label>顯示名稱<input name="name" value="{{ cve.name or '' }}" required></label></div>
+<div class="form-grid three"><label>風險等級<select name="severity">{% for x in ['Critical','Important','Moderate','Low'] %}<option {% if cve.severity==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label><label>狀態<select name="status">{% for x in ['Ongoing','Resolved','Under Investigation'] %}<option {% if cve.status==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label><label>攻擊途徑<select name="attack_vector">{% for x in ['Local','Remote','Adjacent','Physical'] %}<option {% if cve.attack_vector==x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></label></div>
+<div class="form-grid two"><label>影響版本<input name="affected_versions" value="{{ cve.affected_versions or '' }}" placeholder="RHEL 8 / 9 / 10" required></label><label>Kernel 子系統<input name="subsystem" value="{{ cve.subsystem or '' }}" required></label></div>
+<label>簡要說明<textarea name="summary" rows="4" required>{{ cve.summary or '' }}</textarea></label>
+<label>可能影響<textarea name="impact" rows="4" required>{{ cve.impact or '' }}</textarea></label>
+<label>建議處理<textarea name="recommendation" rows="5" required>{{ cve.recommendation or '' }}</textarea></label>
+<div class="form-grid two"><label>Red Hat 參考網址<input type="url" name="reference_url" value="{{ cve.reference_url or '' }}"></label><label>公告日期<input type="date" name="published_date" value="{{ cve.published_date or '' }}"></label></div>
+<div class="check-row"><label><input type="checkbox" name="reboot_required" {% if cve.reboot_required %}checked{% endif %}> 通常需要重新開機</label><label><input type="checkbox" name="enabled" {% if cve.enabled %}checked{% endif %}> 顯示於前台</label></div>
+<div class="form-actions"><a class="btn btn-ghost" href="{{ url_for('admin.cves') }}">取消</a><button class="btn btn-primary" type="submit">儲存 CVE</button></div>
+</form></section>{% endblock %}

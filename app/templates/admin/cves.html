@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}CVE 管理{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container"><div><span class="eyebrow">ADMIN CONSOLE</span><h1>CVE 管理</h1><p>新增、修改或停用前台顯示內容。</p></div>{% include 'admin/_nav.html' %}</div></section>
+<section class="section container">
+  <div class="panel-heading outside"><h2>所有 CVE</h2><a class="btn btn-primary" href="{{ url_for('admin.cve_new') }}">＋ 新增 CVE</a></div>
+  <div class="panel table-wrap"><table><thead><tr><th>CVE</th><th>名稱／子系統</th><th>狀態</th><th>影響版本</th><th>前台</th><th>操作</th></tr></thead><tbody>
+  {% for cve in cves %}<tr><td><strong>{{ cve.cve_id }}</strong><br><span class="mini-badge">{{ cve.severity }}</span></td><td><strong>{{ cve.name }}</strong><br><small>{{ cve.subsystem }}</small></td><td>{{ cve.status }}</td><td>{{ cve.affected_versions }}</td><td>{{ '顯示' if cve.enabled else '停用' }}</td><td class="actions"><a href="{{ url_for('admin.cve_edit', cve_pk=cve.id) }}">編輯</a><form method="post" action="{{ url_for('admin.cve_delete', cve_pk=cve.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="link-danger" type="submit">刪除</button></form></td></tr>
+  {% else %}<tr><td colspan="6">尚無 CVE</td></tr>{% endfor %}</tbody></table></div>
+</section>{% endblock %}

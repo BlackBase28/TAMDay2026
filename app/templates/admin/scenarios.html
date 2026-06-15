@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}題目管理{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container"><div><span class="eyebrow">ADMIN CONSOLE</span><h1>情境題目管理</h1><p>建立固定選項、正確答案與解答說明。</p></div>{% include 'admin/_nav.html' %}</div></section>
+<section class="section container"><div class="panel-heading outside"><h2>所有情境</h2><a class="btn btn-primary" href="{{ url_for('admin.scenario_new') }}">＋ 新增題目</a></div><div class="panel table-wrap"><table><thead><tr><th>標題</th><th>選項數</th><th>狀態</th><th>更新時間</th><th>操作</th></tr></thead><tbody>{% for row in scenarios %}<tr><td><strong>{{ row.title }}</strong><br><small>{{ row.description|truncate(80) }}</small></td><td>{{ row.option_count }}</td><td>{{ '啟用' if row.enabled else '停用' }}</td><td>{{ row.updated_at }}</td><td class="actions"><a href="{{ url_for('admin.scenario_edit', scenario_id=row.id) }}">編輯</a><form method="post" action="{{ url_for('admin.scenario_delete', scenario_id=row.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="link-danger" type="submit">刪除</button></form></td></tr>{% else %}<tr><td colspan="5">尚無題目</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

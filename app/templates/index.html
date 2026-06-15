@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Kernel CVE Radar{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">LINUX KERNEL SECURITY</span>
+      <h1>看懂近期 Kernel CVE，<br><span>練習風險判斷與修補排序</span></h1>
+      <p class="hero-text">以固定資料呈現近期代表性 Linux Kernel 漏洞，不串接 AI、不掃描主機，專注於 CVE 教育與操作紀錄。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('public.challenge') }}">開始情境挑戰</a>
+        <a class="btn btn-secondary" href="{{ url_for('public.random_cve') }}">隨機查看 CVE</a>
+      </div>
+    </div>
+    <div class="radar-panel" aria-label="CVE 統計">
+      <div class="radar-ring ring-1"></div><div class="radar-ring ring-2"></div><div class="radar-line"></div>
+      <div class="radar-core">{{ stats.total or 0 }}<small>CVE</small></div>
+      <div class="radar-point p1"></div><div class="radar-point p2"></div><div class="radar-point p3"></div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-strip">
+  <div class="container stats-grid">
+    <div><strong>{{ stats.total or 0 }}</strong><span>展示 CVE</span></div>
+    <div><strong>{{ stats.ongoing or 0 }}</strong><span>持續追蹤</span></div>
+    <div><strong>{{ stats.reboot or 0 }}</strong><span>通常需更新 Kernel</span></div>
+    <div><strong>100%</strong><span>離線固定資料</span></div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-heading">
+    <div><span class="eyebrow dark">CVE LIBRARY</span><h2>Kernel CVE 清單</h2></div>
+    <p>使用條件篩選，快速比較子系統、影響版本與處理建議。</p>
+  </div>
+  <form class="filter-bar" method="get">
+    <label>RHEL 版本
+      <select name="version">
+        <option value="">全部</option>
+        {% for v in ['6','7','8','9','10'] %}<option value="RHEL {{ v }}" {% if request.args.get('version') == 'RHEL '+v %}selected{% endif %}>RHEL {{ v }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>風險等級
+      <select name="severity"><option value="">全部</option>{% for row in filters.severities %}<option value="{{ row.severity }}" {% if request.args.get('severity') == row.severity %}selected{% endif %}>{{ row.severity }}</option>{% endfor %}</select>
+    </label>
+    <label>Kernel 子系統
+      <select name="subsystem"><option value="">全部</option>{% for row in filters.subsystems %}<option value="{{ row.subsystem }}" {% if request.args.get('subsystem') == row.subsystem %}selected{% endif %}>{{ row.subsystem }}</option>{% endfor %}</select>
+    </label>
+    <button class="btn btn-dark" type="submit">套用篩選</button>
+    <a class="btn btn-ghost" href="{{ url_for('public.index') }}">清除</a>
+  </form>
+
+  <div class="cve-grid">
+    {% for cve in cves %}
+      <article class="cve-card">
+        <div class="card-top">
+          <span class="severity severity-{{ cve.severity|lower }}">{{ cve.severity }}</span>
+          <span class="status status-{{ cve.status|lower }}">{{ cve.status }}</span>
+        </div>
+        <div class="cve-id">{{ cve.cve_id }}</div>
+        <h3>{{ cve.name }}</h3>
+        <p>{{ cve.summary }}</p>
+        <dl class="meta-list">
+          <div><dt>子系統</dt><dd>{{ cve.subsystem }}</dd></div>
+          <div><dt>攻擊途徑</dt><dd>{{ cve.attack_vector }}</dd></div>
+          <div><dt>影響版本</dt><dd>{{ cve.affected_versions }}</dd></div>
+        </dl>
+        <a class="card-link" href="{{ url_for('public.cve_detail', cve_pk=cve.id) }}">查看完整說明 <span>→</span></a>
+      </article>
+    {% else %}
+      <div class="empty-state"><h3>沒有符合條件的 CVE</h3><p>請清除篩選條件後再試一次。</p></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

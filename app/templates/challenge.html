@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Kernel CVE 情境挑戰{% endblock %}
+{% block content %}
+<section class="challenge-hero">
+  <div class="container narrow">
+    <span class="eyebrow">PATCH COMMANDER</span>
+    <h1>Kernel CVE 情境挑戰</h1>
+    <p>根據系統用途與已知條件，選出最符合情境的 CVE。題目與解答皆由管理者預先設定。</p>
+  </div>
+</section>
+<section class="section container narrow">
+  <div class="challenge-card">
+    <div class="question-number">SCENARIO #{{ scenario.id }}</div>
+    <h2>{{ scenario.title }}</h2>
+    <div class="scenario-text">{{ scenario.description }}</div>
+    <form method="post" class="answer-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="scenario_id" value="{{ scenario.id }}">
+      <fieldset>
+        <legend>請選擇答案</legend>
+        {% for option in options %}
+          <label class="answer-option">
+            <input type="radio" name="option_id" value="{{ option.id }}" required>
+            <span class="option-letter">{{ 'ABCD'[loop.index0] if loop.index0 < 4 else loop.index }}</span>
+            <span><strong>{{ option.label }}</strong>{% if option.label == option.cve_id %}<small>{{ option.name }}</small>{% endif %}</span>
+          </label>
+        {% endfor %}
+      </fieldset>
+      <button class="btn btn-primary full" type="submit">提交答案</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

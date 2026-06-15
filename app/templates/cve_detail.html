@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}{{ cve.cve_id }} {{ cve.name }}{% endblock %}
+{% block content %}
+<section class="detail-hero">
+  <div class="container">
+    <a class="back-link" href="{{ url_for('public.index') }}">← 返回 CVE 清單</a>
+    <div class="detail-title-row">
+      <div>
+        <div class="cve-id light">{{ cve.cve_id }}</div>
+        <h1>{{ cve.name }}</h1>
+        <p>{{ cve.summary }}</p>
+      </div>
+      <div class="risk-seal"><strong>{{ cve.severity }}</strong><span>{{ cve.status }}</span></div>
+    </div>
+  </div>
+</section>
+<section class="section container detail-layout">
+  <article class="content-card">
+    <h2>風險與影響</h2>
+    <p>{{ cve.impact }}</p>
+    <h2>建議處理方式</h2>
+    <p>{{ cve.recommendation }}</p>
+    <div class="notice-box"><strong>注意：</strong>RHEL 常以 backport 方式修補安全問題，不能只比較上游 Kernel 版本字串。請以 Red Hat CVE、RHSA 與實際套件狀態為準。</div>
+  </article>
+  <aside class="facts-card">
+    <h2>基本資料</h2>
+    <dl class="facts-list">
+      <div><dt>影響版本</dt><dd>{{ cve.affected_versions }}</dd></div>
+      <div><dt>攻擊途徑</dt><dd>{{ cve.attack_vector }}</dd></div>
+      <div><dt>Kernel 子系統</dt><dd>{{ cve.subsystem }}</dd></div>
+      <div><dt>公告日期</dt><dd>{{ cve.published_date or '未設定' }}</dd></div>
+      <div><dt>重新開機</dt><dd>{{ '通常需要' if cve.reboot_required else '依修補方式確認' }}</dd></div>
+    </dl>
+    {% if cve.reference_url %}<a class="btn btn-primary full" href="{{ cve.reference_url }}" target="_blank" rel="noopener noreferrer">Red Hat 參考資料</a>{% endif %}
+  </aside>
+</section>
+{% endblock %}

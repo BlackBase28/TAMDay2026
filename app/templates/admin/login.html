@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}管理者登入{% endblock %}
+{% block content %}
+<section class="login-section">
+  <div class="login-card">
+    <div class="login-mark">K</div>
+    <span class="eyebrow dark">ADMIN CONSOLE</span>
+    <h1>管理者登入</h1>
+    <p>登入後可維護 CVE、情境題目及查詢使用者操作紀錄。</p>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>管理者帳號<input name="username" autocomplete="username" required autofocus></label>
+      <label>管理者密碼<input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn btn-primary full" type="submit">登入後台</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

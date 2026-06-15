@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kernel CVE Risk Challenge - Linux Kernel CVE 展示與情境挑戰">
+  <title>{% block title %}Kernel CVE Radar{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('public.index') }}">
+        <span class="brand-mark">K</span>
+        <span><strong>Kernel CVE</strong><small>Risk Challenge</small></span>
+      </a>
+      <nav class="main-nav" aria-label="主要導覽">
+        <a href="{{ url_for('public.index') }}">CVE 雷達</a>
+        <a href="{{ url_for('public.challenge') }}">情境挑戰</a>
+        {% if session.get('admin_id') %}
+          <a href="{{ url_for('admin.dashboard') }}">管理後台</a>
+        {% else %}
+          <a class="nav-admin" href="{{ url_for('admin.login') }}">管理者</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container flash-stack" role="status">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <strong>Kernel CVE Risk Challenge</strong>
+        <p>本網站為展示與教育用途，實際影響判斷應以 Red Hat CVE、RHSA 與系統套件狀態為準。</p>
+      </div>
+      <div class="footer-right">Flask · SQLite · Apache httpd</div>
+    </div>
+  </footer>
+</body>
+</html>

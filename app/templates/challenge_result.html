@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}挑戰結果{% endblock %}
+{% block content %}
+<section class="section container narrow result-page">
+  <div class="result-card {{ 'is-correct' if correct else 'is-wrong' }}">
+    <div class="result-icon">{{ '✓' if correct else '×' }}</div>
+    <span class="eyebrow dark">CHALLENGE RESULT</span>
+    <h1>{{ '判斷正確' if correct else '再想一下' }}</h1>
+    <p class="result-choice">你選擇：<strong>{{ selected.label }}</strong></p>
+    <div class="explanation"><h2>解答說明</h2><p>{{ scenario.explanation }}</p></div>
+    <div class="result-actions">
+      <a class="btn btn-primary" href="{{ url_for('public.challenge') }}">下一題</a>
+      <a class="btn btn-secondary" href="{{ url_for('public.index') }}">查看 CVE 清單</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
