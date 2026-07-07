@@ -1,0 +1,25 @@
+FROM registry.access.redhat.com/ubi9/python-311:latest
+
+WORKDIR /opt/app-root/src
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=1001:0 . .
+
+USER 0
+RUN install -d -o 1001 -g 0 -m 0770 /data /var/log/kernel-cve-radar && \
+    chown -R 1001:0 /opt/app-root/src && \
+    chmod -R g=u /opt/app-root/src
+
+USER 1001
+ENV DATABASE_PATH=/data/kernel_cve.db \
+    INITIAL_CREDENTIALS_FILE=/data/initial-credentials.txt \
+    AUTH_EVENT_LOG_FILE=/var/log/kernel-cve-radar/auth-events.jsonl \
+    AUTH_EVENT_STDOUT=true \
+    TRUST_PROXY_HEADERS=true \
+    PROXY_FIX_X_FOR=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8000
+EXPOSE 8000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "4", "--timeout", "60", "--capture-output", "--access-logfile", "/var/log/kernel-cve-radar/access.log", "--error-logfile", "/var/log/kernel-cve-radar/error.log", "wsgi:app"]

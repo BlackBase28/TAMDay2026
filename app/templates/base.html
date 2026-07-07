@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Kernel CVE Radar{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/red-hat-icon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('public.index') }}">
+      <img src="{{ url_for('static', filename='img/red-hat-icon.svg') }}" alt="Red Hat" class="brand-icon">
+      <span>Kernel CVE Radar</span>
+    </a>
+    <nav>
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('public.index') }}">CVE 展示</a>
+        <a href="{{ url_for('public.admin_info') }}">Admin 資訊</a>
+        <span class="user">{{ session.get('username') }} / {{ session.get('role') }}</span>
+        <a href="{{ url_for('auth.logout') }}">登出</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-wrap">
+          {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    本網站為 TAM Day 展示與教育用途，並非正式弱點掃描或產品安全公告。實際影響判斷應以 Red Hat官方說明為準。
+  </footer>
+</body>
+</html>

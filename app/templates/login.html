@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}登入｜Kernel CVE Radar{% endblock %}
+{% block content %}
+<section class="login-panel">
+  <div>
+    <p class="eyebrow">RED HAT TAM DAY 2026</p>
+    <h1>Kernel CVE Radar</h1>
+  </div>
+  <form method="post" class="card login-card">
+    <label>帳號
+      <input name="username" autocomplete="username" required>
+    </label>
+    <label>密碼
+      <input name="password" type="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit">登入</button>
+  </form>
+</section>
+{% endblock %}

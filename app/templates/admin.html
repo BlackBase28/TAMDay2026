@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Admin 資訊｜Kernel CVE Radar{% endblock %}
+{% block content %}
+<section class="hero compact-hero">
+  <p class="eyebrow">ADMIN</p>
+  <h1>Admin 資訊頁</h1>
+</section>
+<section class="card">
+  <h2>使用者狀態</h2>
+  <table>
+    <thead><tr><th>帳號</th><th>角色</th><th>啟用</th><th>最後登入</th></tr></thead>
+    <tbody>
+    {% for user in users %}
+      <tr><td>{{ user['username'] }}</td><td>{{ user['role'] }}</td><td>{{ 'yes' if user['enabled'] else 'no' }}</td><td>{{ user['last_login_at'] or '-' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+<section class="card">
+  <h2>最近登入與 Admin 存取事件</h2>
+  <table>
+    <thead><tr><th>時間</th><th>事件</th><th>結果</th><th>帳號</th><th>來源 IP</th></tr></thead>
+    <tbody>
+    {% for event in events %}
+      <tr><td>{{ event['occurred_at'] }}</td><td>{{ event['event_outcome'] }}</td><td>{{ event['failure_reason'] or '-' }}</td><td>{{ event['username_attempted'] }}</td><td>{{ event['source_ip'] }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
