@@ -19,6 +19,8 @@ VENDOR_SSL_CONF=/etc/httpd/conf.d/ssl.conf
 VENDOR_SSL_DISABLED=/etc/httpd/conf.d/ssl.conf.vendor-disabled
 LEGACY_LISTEN_CONF=/etc/httpd/conf.d/00-listen-443.conf
 LEGACY_SSL_VHOST=/etc/httpd/conf.d/kernel-cve-radar-ssl.conf
+LEGACY_CVE_RADAR_CONF=/etc/httpd/conf.d/cve-radar.conf
+LEGACY_CVE_RADAR_DISABLED=/etc/httpd/conf.d/cve-radar.conf.legacy-disabled
 
 set_env_value() {
   local key="$1" value="$2" file="$3"
@@ -95,6 +97,13 @@ configure_httpd_base() {
   fi
   if [[ -f "${LEGACY_SSL_VHOST}" ]]; then
     mv -f "${LEGACY_SSL_VHOST}" "${LEGACY_SSL_VHOST}.legacy-disabled"
+  fi
+
+  # Disable old deployment file name used by early builds. If it remains active,
+  # httpd may keep writing to cve-radar_access.log / cve-radar_error.log or load
+  # duplicate VirtualHosts instead of this version's canonical config.
+  if [[ -f "${LEGACY_CVE_RADAR_CONF}" && "${LEGACY_CVE_RADAR_CONF}" != "${HTTPD_CONF}" ]]; then
+    mv -f "${LEGACY_CVE_RADAR_CONF}" "${LEGACY_CVE_RADAR_DISABLED}"
   fi
   cat > "${HTTPD_BASE_CONF}" <<BASEEOF
 ServerName ${SERVER_NAME}
@@ -209,5 +218,5 @@ for _ in {1..15}; do
   sleep 2
 done
 
-echo "健康檢查失敗，請查看：${LOG_DIR}/error.log 與 /var/log/httpd/kernel-cve-ssl-error.log"
+echo "健康檢查失敗，請查看：${LOG_DIR}/error.log 與 /var/log/httpd/error_log"
 exit 1

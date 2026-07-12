@@ -1,12 +1,21 @@
 # Kernel CVE Radar
 
-TAM Day 2026 展示用網站。此版本是「修復前」簡化版，主要目的是讓後續 AI／AAP Playbook 有容易修改的網頁碼。
+TAM Day 2026 展示用網站。此版本是簡化版，只保留登入、CVE 資訊展示、精簡事件輸出與 httpd 維護頁切換，方便後續 AI／AAP Playbook 修改與修復。
 
 ## 展示情境
 
 1. **身分管理缺陷**：`user1` 登入後可存取 `/admin` 內容，這是刻意保留的修復前狀態。
-2. **DDoS 攻擊**：專案提供 httpd 維護頁設定，後續 Playbook 可將所有 request 導向維護頁。
+2. **站台隔離／維護頁切換**：外部 Playbook 可透過 httpd 設定將所有 request 導向維護頁，避免流量進入 Flask。
 3. **撞庫攻擊**：登入事件會寫入精簡 `auth-events.jsonl`，後續 Playbook 可依事件鎖定帳號。
+
+## 建議的維護頁 Demo 場景
+
+DDoS 需要同時考慮短時間 request 數與系統負載，在 Demo 環境不一定容易穩定重現。建議優先採用以下兩種情境來展示維護頁切換：
+
+- **未授權管理頁存取後的暫時隔離**：當 `auth-events.jsonl` 出現 `user1` 的 `admin_access` 且 `result=allowed`，代表一般使用者已看到 Admin 內容。後續 AI／AAP 可先切換維護頁，再修正 `/admin` 的角色檢查。
+- **後端異常或疑似被濫用**：當 `/healthz` 失敗、httpd `access_log` 出現大量 `502/503/504`，或應用 `error.log` 出現連續錯誤時，Playbook 可切到靜態維護頁，讓 httpd 直接回應使用者，避免 request 繼續進入 Flask。
+
+這兩種情境都不需要 API，也不需要真的產生高負載，比較適合 TAM Day 現場展示。
 
 ## 快速安裝
 
@@ -44,7 +53,16 @@ curl -ks https://<VM-IP-or-FQDN>/healthz
 
 ## Log
 
-保留三種 Log：
+為了讓後續 AI Playbook 比較容易判讀，httpd 使用 RHEL 預設 Log 路徑：
+
+```text
+/var/log/httpd/access_log
+/var/log/httpd/error_log
+
+> v2.7.5 之後，部署腳本會自動停用舊版 `/etc/httpd/conf.d/cve-radar.conf`，統一使用 `/etc/httpd/conf.d/kernel-cve-radar.conf`，避免 httpd 繼續寫入舊的 `cve-radar_access.log` / `cve-radar_error.log`。
+```
+
+應用程式仍保留三種 Log：
 
 ```text
 /var/log/kernel-cve-radar/auth-events.jsonl
@@ -63,8 +81,6 @@ curl -ks https://<VM-IP-or-FQDN>/healthz
 ```json
 {"ts":"2026-06-25T07:15:10Z","event":"admin_access","user":"user1","role":"user","ip":"1.171.129.203","path":"/admin","result":"allowed"}
 ```
-
-EDA 或 AI 後續建議只讀取 `auth-events.jsonl`。
 
 ## 維護頁切換
 
