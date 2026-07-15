@@ -16,7 +16,7 @@ def login_required():
 
 @bp.get("/healthz")
 def healthz():
-    return {"status": "ok", "version": current_app.config["APP_VERSION"]}
+    return {"status": "ok", "version": current_app.config["APP_VERSION"], "mode": "solution", "fixed_version": True}
 
 
 @bp.get("/")
@@ -48,7 +48,10 @@ def admin_info():
         return guard
 
     username = session.get("username", "-")
-    role = session.get("role", "-")
+    current_user = query_one("SELECT username, role FROM users WHERE id = ?", (session.get("user_id"),))
+    role = current_user["role"] if current_user else session.get("role", "-")
+    username = current_user["username"] if current_user else username
+
     if role != "admin":
         write_admin_access_event(username, role, "denied")
         abort(403)

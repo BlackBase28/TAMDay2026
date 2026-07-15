@@ -16,7 +16,7 @@ def login_required():
 
 @bp.get("/healthz")
 def healthz():
-    return {"status": "ok", "version": current_app.config["APP_VERSION"]}
+    return {"status": "ok", "version": current_app.config["APP_VERSION"], "mode": "start"}
 
 
 @bp.get("/")
