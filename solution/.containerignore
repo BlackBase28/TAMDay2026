@@ -1,0 +1,16 @@
+.git
+.gitignore
+.containerignore
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+*.db
+.env
+instance/
+data/
+logs/
+deploy/
+*.zip
+*.tar.gz
+*-checksums.txt

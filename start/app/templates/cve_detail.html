@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ cve['cve_id'] }}｜Kernel CVE Radar{% endblock %}
+{% block content %}
+<section class="card detail-card">
+  <p><a href="{{ url_for('public.index') }}">← 回到 CVE 清單</a></p>
+  <p class="eyebrow">{{ cve['subsystem'] }}</p>
+  <h1>{{ cve['cve_id'] }}｜{{ cve['name'] }}</h1>
+  <dl class="kv">
+    <dt>Severity</dt><dd>{{ cve['severity'] }}</dd>
+    <dt>Status</dt><dd>{{ cve['status'] }}</dd>
+    <dt>Attack Vector</dt><dd>{{ cve['attack_vector'] }}</dd>
+    <dt>Affected</dt><dd>{{ cve['affected_versions'] }}</dd>
+    <dt>Reboot</dt><dd>{% if cve['reboot_required'] %}通常需要{% else %}待確認{% endif %}</dd>
+  </dl>
+  <h2>摘要</h2>
+  <p>{{ cve['summary'] }}</p>
+  <h2>可能影響</h2>
+  <p>{{ cve['impact'] }}</p>
+  <h2>建議處理</h2>
+  <p>{{ cve['recommendation'] }}</p>
+</section>
+{% endblock %}

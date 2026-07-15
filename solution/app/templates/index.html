@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}CVE 展示｜Kernel CVE Radar{% endblock %}
+{% block content %}
+<section class="hero compact-hero">
+  <p class="eyebrow">TAM DAY 2026 DEMO</p>
+  <h1>Kernel CVE Information Showcase</h1>
+</section>
+<section class="card">
+  <h2>Kernel CVE 清單</h2>
+  <div class="cve-list">
+    {% for cve in cves %}
+      <a class="cve-row" href="{{ url_for('public.cve_detail', cve_id=cve['cve_id']) }}">
+        <span class="cve-id">{{ cve['cve_id'] }}</span>
+        <span class="cve-name">{{ cve['name'] }}</span>
+        <span>{{ cve['subsystem'] }}</span>
+        <span class="pill">{{ cve['severity'] }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+<p class="fixed-version-label">Fixed version</p>
+{% endblock %}
