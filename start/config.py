@@ -21,13 +21,21 @@ def env_int(name: str, default: int) -> int:
         return default
 
 
+def packaged_version() -> str:
+    """Return the version shipped in this source tree/image.
+
+    APP_VERSION used to be accepted from /etc/kernel-cve-radar.env.  That made
+    an old value survive an application upgrade and caused /healthz to report
+    the previous release.  The packaged VERSION file is now authoritative.
+    """
+    version_file = BASE_DIR / "VERSION"
+    if not version_file.exists():
+        return "unknown"
+    return version_file.read_text(encoding="utf-8").strip() or "unknown"
+
+
 class Config:
-    APP_VERSION = os.getenv(
-        "APP_VERSION",
-        (BASE_DIR / "VERSION").read_text(encoding="utf-8").strip()
-        if (BASE_DIR / "VERSION").exists()
-        else "unknown",
-    )
+    APP_VERSION = packaged_version()
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
     DATABASE = os.getenv("DATABASE_PATH", str(BASE_DIR / "instance" / "kernel_cve.db"))
     INITIAL_CREDENTIALS_FILE = os.getenv(

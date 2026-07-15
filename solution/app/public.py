@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask import Blueprint, abort, current_app, redirect, render_template, session, url_for
+from flask import Blueprint, abort, current_app, jsonify, redirect, render_template, session, url_for
 
 from .auth_events import write_admin_access_event
 from .db import query_all, query_one
@@ -16,7 +16,16 @@ def login_required():
 
 @bp.get("/healthz")
 def healthz():
-    return {"status": "ok", "version": current_app.config["APP_VERSION"], "mode": "solution", "fixed_version": True}
+    response = jsonify(
+        status="ok",
+        version=current_app.config["APP_VERSION"],
+        mode="solution",
+        fixed_version=True,
+    )
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Kernel-CVE-Radar-Version"] = current_app.config["APP_VERSION"]
+    response.headers["X-Kernel-CVE-Radar-Mode"] = "solution"
+    return response
 
 
 @bp.get("/")

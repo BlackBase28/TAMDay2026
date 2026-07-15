@@ -51,10 +51,15 @@ th { color: var(--muted); font-size: .85rem; }
 .compact-hero { margin-bottom: 1.5rem; }
 
 .fixed-version-label {
-  margin-top: 1.5rem;
-  text-align: center;
-  color: #6f7782;
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
+  display: inline-block;
+  margin: 0 0 .65rem;
+  padding: .35rem .75rem;
+  border: 1px solid #b8d6c1;
+  border-radius: 999px;
+  background: #eef8f1;
+  color: #246b3a;
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }

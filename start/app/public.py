@@ -16,7 +16,11 @@ def login_required():
 
 @bp.get("/healthz")
 def healthz():
-    return {"status": "ok", "version": current_app.config["APP_VERSION"], "mode": "start"}
+    response = jsonify(status="ok", version=current_app.config["APP_VERSION"], mode="start")
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Kernel-CVE-Radar-Version"] = current_app.config["APP_VERSION"]
+    response.headers["X-Kernel-CVE-Radar-Mode"] = "start"
+    return response
 
 
 @bp.get("/")
