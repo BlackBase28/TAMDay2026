@@ -1,7 +1,7 @@
 FROM registry.access.redhat.com/ubi9/python-311:latest
 
 LABEL org.opencontainers.image.title="Kernel CVE Radar" \
-      org.opencontainers.image.version="2.8.2" \
+      org.opencontainers.image.version="2.8.3" \
       io.tamday.kernel-cve-radar.variant="start"
 
 WORKDIR /opt/app-root/src
